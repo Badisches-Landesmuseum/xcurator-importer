@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package dreipc.asset.topicmodeling;
+
+option java_package = "dreipc.q8r.proto.asset.document";
+option java_outer_classname = "TopicDetectionProtos";
+import "google/protobuf/timestamp.proto";
+
+message TopicDetectionActionProto {
+  string providedBy = 1;
+  repeated TopicProto topic = 2;
+  StatusProto status = 3;
+  string documentId = 4;
+  string projectId = 5;
+  string pageId= 6;
+  google.protobuf.Timestamp createdAt = 7;
+  string paragraphId = 8;
+  string externalId = 9;  // TODO: External ids as list
+}
+
+message TopicProto {
+  string id = 1;
+  float weight = 2;
+  repeated TopicKeyWordProto topicKeyWords = 3;
+}
+
+message TopicKeyWordProto {
+  float weight = 1;
+  string label = 2;
+}
+
+enum StatusProto {
+  NOT_STARTED = 0;
+  PENDING = 1;
+  DONE = 2;
+  VERIFIED = 3;
+  ERROR = 4;
+}
+
+

@@ -1,0 +1,31 @@
+/**
+ * Use Gradle properties inside spring application.yml with @...@ annotation
+ *
+ * @see:https://www.baeldung.com/spring-boot-auto-property-expansion
+ */
+
+import org.apache.tools.ant.filters.ReplaceTokens
+afterEvaluate {
+    configure(allProcessResourcesTasks()) {
+        with copySpec {
+            from 'src/main/resources'
+            include '**/application*.yml'
+            include '**/application*.yaml'
+            include '**/application*.properties'
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            project.properties.findAll().each {
+                prop ->
+                    if (prop.value != null) {
+                        filter(ReplaceTokens, tokens: [(prop.key.toString()): prop.value.toString()])
+                        filter(ReplaceTokens, tokens: [('project.' + prop.key.toString()): prop.value.toString()])
+                    }
+            }
+        }
+    }
+}
+
+def allProcessResourcesTasks() {
+    sourceSets*.processResourcesTaskName.collect {
+        tasks[it]
+    }
+}

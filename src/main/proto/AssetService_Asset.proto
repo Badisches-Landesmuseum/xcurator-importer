@@ -1,0 +1,287 @@
+syntax = "proto3";
+
+package dreipc.q8r.proto.asset;
+option java_package = "dreipc.q8r.proto.asset";
+option java_outer_classname = "AssetProtos";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+
+
+message AssetStoreInitActionProto {
+  string projectId = 1;
+  repeated AssetTypeProto type = 2;
+  google.protobuf.Timestamp from = 3;
+  google.protobuf.Timestamp until = 4;
+  string id = 5;
+}
+
+message AssetStoreInitAckEventProto {
+  string projectId = 1;
+  repeated AssetTypeProto type = 2;
+  string id = 3;
+}
+
+
+message DeleteAssetAction {
+  string id = 1;
+  string projectId = 2;
+}
+
+message AssetDeletedEvent {
+  string id = 1;
+  string projectId = 2;
+}
+
+message ProjectAsset {
+  string id = 1;
+  string projectId = 2;
+  AssetTypeProto type = 3;
+}
+
+
+message ImageSyncProto {
+  string  syncId = 1;
+  ImageProto image = 2;
+}
+
+
+message ImageProto {
+  string id = 1;
+  AssetTypeProto type = 2;
+  google.protobuf.Timestamp createdAt = 3;
+  google.protobuf.Timestamp updatedAt = 4;
+  AssetFileProto file = 5;
+  ImageMetadataProto metadata = 6;
+  GeoLocationProto createdAtLocation = 7;
+  map<string, string> externalIds = 8;
+  string projectId = 9;
+  int64 version = 10;
+  AssetDescriptionProto description = 11;
+  string previewUrl = 12;
+  AssetOwnershipProto ownership = 13;
+}
+
+
+message EmbeddedImageProto {
+  string id = 1;
+  AssetTypeProto type = 2;
+  google.protobuf.Timestamp createdAt = 3;
+  google.protobuf.Timestamp updatedAt = 4;
+  AssetFileProto file = 5;
+  ImageMetadataProto metadata = 6;
+  GeoLocationProto createdAtLocation = 7;
+  map<string, string> externalIds = 8;
+  string projectId = 9;
+  int64 version = 10;
+  AssetDescriptionProto description = 11;
+  string previewUrl = 12;
+}
+
+message ImageMetadataProto {
+  int32 height = 1;
+  int32 width = 2;
+  int32 xResolution = 3;
+  int32 yResolution = 4;
+  ImageOrientationProto orientation = 5;
+  string colorSpace = 6;
+  string primaryColor = 7;
+}
+
+message GeoLocationProto {
+  // The latitude in degrees. It must be in the range [-90.0, +90.0].
+  double latitude = 1;
+  // The longitude in degrees. It must be in the range [-180.0, +180.0].
+  double longitude = 2;
+  string name = 3;
+  string countryCode = 4;
+}
+
+enum ImageOrientationProto {
+  PORTRAIT = 0;
+  LANDSCAPE = 1;
+}
+
+message DocumentSyncProto {
+  string  syncId = 1;
+  DocumentProto document = 2;
+}
+
+message ImageCreateActionProto {
+  ImageProto image = 1;
+  bool extractMetadata = 2;
+}
+
+message HypertextStoreInitActionProto {
+  string projectId = 1;
+}
+
+message HypertextStoreInitEventProto {
+  string projectId = 1;
+}
+
+message HypertextProto {
+  string id = 1;
+  AssetTypeProto type = 2;
+  google.protobuf.Timestamp createdAt = 3;
+  google.protobuf.Timestamp updatedAt = 4;
+  HypertextMetadataProto metadata = 5;
+  map<string, string> externalIds = 6;
+  string projectId = 7;
+  int64 version = 8;
+  AssetDescriptionProto description = 9;
+  string previewUrl = 10;
+  string content = 11;
+  string sourceUrl = 12;
+  AssetOwnershipProto ownership = 13;
+}
+
+message HypertextMetadataProto {
+  int32 wordCount = 1;
+  string languageName = 2;
+}
+
+message HypertextSyncProto {
+  string  syncId = 1;
+  HypertextProto hypertext = 2;
+}
+
+message PageSyncProto {
+  string  syncId = 1;
+  PageProto page = 2;
+}
+
+message DocumentProto {
+  string id = 1;
+  AssetTypeProto type = 2;
+  google.protobuf.Timestamp createdAt = 3;
+  google.protobuf.Timestamp updatedAt = 4;
+  AssetFileProto file = 5;
+  DocumentMetadataProto metadata = 6;
+  map<string, string> externalIds = 7;
+  string projectId = 8;
+  repeated string pageIds = 9;
+  int64 version = 10;
+  AssetDescriptionProto description = 11;
+  string previewUrl = 12;
+}
+
+message DocumentMetadataProto {
+  int32 wordCount = 1;
+  int32 pageCount = 2;
+  string languageName = 3;
+}
+
+message PageProto {
+  string id = 1;
+  string content = 2;
+  google.protobuf.Timestamp createdAt = 3;
+  google.protobuf.Timestamp updatedAt = 4;
+  string projectId = 5;
+  string assetId = 6;
+  repeated string imageIds = 7;
+  repeated string links = 8;
+  int32 pageNumber = 9;
+  int64 version = 10;
+}
+
+
+message AudioSyncProto {
+  string  syncId = 1;
+  AudioProto audio = 2;
+}
+
+
+message AudioProto {
+  string id = 1;
+  AssetTypeProto type = 2;
+  google.protobuf.Timestamp createdAt = 3;
+  google.protobuf.Timestamp updatedAt = 4;
+  AssetFileProto file = 5;
+  AudioMetadataProto metadata = 6;
+  map<string, string> externalIds = 7;
+  string projectId = 8;
+  int64 version = 9;
+  AssetDescriptionProto description = 10;
+  string previewUrl = 11;
+}
+
+message AudioMetadataProto {
+  int32 sampleRate = 1;
+  int32 channelsCount = 2;
+  google.protobuf.Duration duration = 3;
+  string audioCompressor = 4;
+  google.protobuf.Timestamp creationTime = 5;
+  google.protobuf.Timestamp lastModifiedTime = 6;
+}
+
+
+message VideoSyncProto {
+  string  syncId = 1;
+  VideoProto video = 2;
+}
+
+message VideoProto {
+  string id = 1;
+  AssetTypeProto type = 2;
+  google.protobuf.Timestamp createdAt = 3;
+  google.protobuf.Timestamp updatedAt = 4;
+  AssetFileProto file = 5;
+  VideoMetadataProto metadata = 6;
+  map<string, string> externalIds = 7;
+  string projectId = 8;
+  int64 version = 9;
+  AssetDescriptionProto description = 10;
+  string previewUrl = 11;
+}
+
+message VideoMetadataProto {
+  google.protobuf.Duration duration = 1;
+  int32 Height = 2;
+  int32 Width = 3;
+  int32 yResolution = 4;
+  int32 xResolution = 5;
+  float frameRate = 6;
+  float preferredVolume = 7;
+  int32 audioSampleRate = 8;
+  string audioFormat = 9;
+  string videoCompressor = 10;
+  float averageBitRate = 11;
+}
+
+enum AssetTypeProto {
+  IMAGE = 0;
+  DOCUMENT = 1;
+  AUDIO = 2;
+  VIDEO = 3;
+  HYPERTEXT = 4;
+}
+
+message AssetFileProto {
+  string url = 1;
+  string name = 2;
+  string path = 3;
+  string md5checksum = 4;
+  int64 siteInBytes = 5;
+  string mimeType = 6;
+  string sourceUrl = 7;
+
+}
+
+message AssetOwnershipProto {
+  string ownerName = 1;
+  string creatorName = 2;
+  string copyRight = 3;
+  string provider = 4;
+}
+
+message AssetDescriptionProto {
+  string title = 1;
+  string shortAbstract = 2;
+  repeated string keywords = 3;
+}
+
+message AssetPreviewImageProto {
+  string url = 1;
+  string shortDescription = 2;
+}

@@ -1,0 +1,8 @@
+scalar URL # Spec: https://www.graphql-scalars.dev/docs/scalars/url
+scalar Duration # Spec: https://www.graphql-scalars.dev/docs/scalars/duration
+scalar DateTime # Spec: https://www.graphql-scalars.dev/docs/scalars/date-time
+scalar Upload # Spec: https://github.com/jaydenseric/graphql-multipart-request-spec
+scalar Latitude # Spec: https://www.graphql-scalars.dev/docs/scalars/latitude
+scalar Longitude # Spec: https://www.graphql-scalars.dev/docs/scalars/longitude
+scalar RGB # Spec: https://www.graphql-scalars.dev/docs/scalars/rgb
+scalar HTML # Spec: https://datatracker.ietf.org/doc/html/rfc7992

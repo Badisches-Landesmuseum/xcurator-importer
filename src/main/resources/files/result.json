@@ -1,0 +1,156 @@
+{
+  "imdasid": "7F5336347A30469185F604665D4D6689",
+  "invnr": "MK 6767",
+  "standort": "nicht ausgestellt",
+  "titel": "As des Augustus",
+  "objektbezeichnung": "Münze",
+  "person": [
+    {
+      "typ": "Münzherr*in",
+      "anzeigename": "Augustus",
+      "nachname": "Augustus <Imperium Romanum, Imperator>",
+      "notiz": "Augustus (* 23. September 63 v. Chr.[1] als Gaius Octavius in Rom[2]; + 19. August 14 n. Chr. in Nola bei Neapel) gilt als erster römischer Kaiser."
+    }
+  ],
+  "ort": [
+    {
+      "typ": "Münzstätte",
+      "term": "Lyon"
+    }
+  ],
+  "material": [
+    {
+      "term": "Bronze",
+      "zusatz": [
+        {
+          "typ": "Begriffserklärung: Standard DE",
+          "term": "Sammelname für Legierungen, die neben Kupfer (ca. 60 %) überwiegend aus Zinn bestehen. Bronze wurde bereits in vorgeschichtlicher Zeit (Bronzezeit) für Geräte, Plastiken, Schmuck und Waffen verwendet. Ab einem Anteil von 10 % Zinn ist die gute Gießbarkeit der Bronze gewährleistet, es verringert sich aber die Elastizität und die Schmiedbarkeit. Gute geschmiedete Bronze-Klingen enthalten meist nicht mehr als 4 % Zinn. Bei höherem Zinnanteil wurde schon in der Bronzezeit Arsen als Legierungsbestandteil beigemengt, um die Härte zu erhöhen."
+        }
+      ]
+    }
+  ],
+  "technik": [
+    {
+      "term": "geprägt",
+      "zusatz": [
+        {
+          "typ": "Begriffserklärung: Standard DE",
+          "term": "Von Prägen : Verformung von Material auf kaltem Wege durch hohen Druck. Beim Prägen wird aus einer ebenen Werkstoffoberfläche ein Relief. Geprägt wird insbesondere Metall (z. B. Münzen und Medaillen) sowie Leder (z. B. Bucheinbände)."
+        }
+      ]
+    }
+  ],
+  "datierung": [
+    {
+      "term": "10-6 v. Chr.",  // TODO: GIBT ES IMMER? list von terms extrahieren
+      "beginn": "-10",
+      "ende": "-6"
+    }
+  ],
+  "sammlungsgliederung": [
+    {
+      "term": "Sammlung Creuzer"
+    }
+  ],
+  "onlinepublikation": [
+    {
+      "term": "NVBW_Portal"
+    },
+    {
+      "term": "DK"
+    },
+    {
+      "term": "DK_Numismatik"
+    },
+    {
+      "term": "LEO-BW"
+    },
+    {
+      "term": "DDB"
+    }
+  ],
+  "masse": [
+    {
+      "typ": "Durchmesser",
+      "value": "25.2",
+      "unit": "mm"
+    },
+    {
+      "typ": "Gewicht",
+      "value": "10.43",
+      "unit": "g"
+    }
+  ],
+  "medium": [
+    {
+      "term": "A_Scan01 #",
+      "name": "MK 006767_A_Scan01.jpg",
+      "reihung": "1",
+      "typ": "Bild",
+      "link": "https://expotest.bsz-bw.de/blm/digitaler-katalog/image?id=7F5336347A30469185F604665D4D6689&width=400&pos=0",
+      "rechtestatus": [
+        {
+          "imdasid": "568ce539-1c15-46f2-a75e-105c0c66f646",
+          "term": "Public Domain Dedication - CC0 1.0 Universell (CC0 1.0)",
+          "thesaurus": "Medienrechte",
+          "kategorie": "BSZ_Public-Domain",
+          "related": [
+            {
+              "term": "Creative Commons",
+              "typ": "Begriffsdefinition"
+            }
+          ],
+          "notiz": [
+            {
+              "typ": "Begriffserklärung",
+              "term": "Kein Urheberrechtsschutz Die Person, die ein Werk mit dieser Deed verknüpft hat, hat dieses Werk in die Gemeinfreiheit - auch genannt Public Domain - entlassen, indem sie weltweit auf alle urheberrechtlichen und verwandten Schutzrechte verzichtet hat, soweit das gesetzlich möglich ist. Sie dürfen das Werk kopieren, verändern, verbreiten und aufführen, sogar zu kommerziellen Zwecken, ohne um weitere Erlaubnis bitten zu müssen. Siehe Sonstige Informationen unten."
+            }
+          ],
+          "urls": [
+            {
+              "term": "https://creativecommons.org/publicdomain/zero/1.0/deed.de"
+            }
+          ],
+          "level": "0",
+          "path": "|111655"
+        }
+      ]
+    },
+    {
+      "term": "R_Scan01 #",
+      "name": "MK 006767_R_Scan01.jpg",
+      "reihung": "2",
+      "typ": "Bild",
+      "link": "https://expotest.bsz-bw.de/blm/digitaler-katalog/image?id=7F5336347A30469185F604665D4D6689&width=400&pos=1",
+      "rechtestatus": [
+        {
+          "imdasid": "568ce539-1c15-46f2-a75e-105c0c66f646",
+          "term": "Public Domain Dedication - CC0 1.0 Universell (CC0 1.0)",
+          "thesaurus": "Medienrechte",
+          "kategorie": "BSZ_Public-Domain",
+          "related": [
+            {
+              "term": "Creative Commons",
+              "typ": "Begriffsdefinition"
+            }
+          ],
+          "notiz": [
+            {
+              "typ": "Begriffserklärung",
+              "term": "Kein Urheberrechtsschutz Die Person, die ein Werk mit dieser Deed verknüpft hat, hat dieses Werk in die Gemeinfreiheit - auch genannt Public Domain - entlassen, indem sie weltweit auf alle urheberrechtlichen und verwandten Schutzrechte verzichtet hat, soweit das gesetzlich möglich ist. Sie dürfen das Werk kopieren, verändern, verbreiten und aufführen, sogar zu kommerziellen Zwecken, ohne um weitere Erlaubnis bitten zu müssen. Siehe Sonstige Informationen unten."
+            }
+          ],
+          "urls": [
+            {
+              "term": "https://creativecommons.org/publicdomain/zero/1.0/deed.de"
+            }
+          ],
+          "level": "0",
+          "path": "|111655"
+        }
+      ]
+    }
+  ],
+  "video": [],
+  "provenienz": []
+}

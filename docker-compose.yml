@@ -1,0 +1,37 @@
+services:
+  mongodb:
+    container_name: mongodb
+    image: 'bitnami/mongodb:6.0-debian-11'
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/bitnami/mongodb
+    environment:
+      MONGODB_USERNAME: dreipc
+      MONGODB_PASSWORD: secret
+      MONGODB_DATABASE: example-database
+      MONGODB_ROOT_PASSWORD: secret
+  rabbitmq:
+    image: bitnami/rabbitmq:3.8-debian-10
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_USERNAME: dreipc
+      RABBITMQ_PASSWORD: password
+  redis:
+    container_name: redis
+    # https://hub.docker.com/r/bitnami/redis-cluster
+    image: bitnami/redis-cluster:7.0.5
+    volumes:
+      - redis_data:/bitnami/redis
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_PASSWORD=password
+      - REDIS_NODES=redis
+
+volumes:
+  mongodb_data:
+  redis_data:

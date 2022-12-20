@@ -1,0 +1,78 @@
+/**
+ *  Gradle Script to set up a default Testing environment for Java Applications
+ *  - Junit 5
+ *  - Jacoco
+ *
+ *  More Information's about Gradle Test Settings: Information's about https://docs.gradle.org/current/userguide/java_testing.html
+ */
+
+apply plugin: "jacoco"
+
+test {
+    description = 'Runs the unit tests only.'
+    useJUnitPlatform()
+    filter {
+        excludeTestsMatching '*IntegrationTest'
+        excludeTestsMatching '*E2ETest'
+    }
+    minHeapSize = "1024m"
+    maxHeapSize = "2048m"
+    systemProperty 'spring.profiles.active', 'test'
+    systemProperty 'junit.extensions.autodetection.enabled', 'true'
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+
+    testLogging {
+        events = ["passed", "failed", "skipped"]
+        showStandardStreams = true
+    }
+}
+
+task integrationtest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching '*IntegrationTest'
+        excludeTestsMatching '*E2ETest'
+    }
+    minHeapSize = "512m"
+    maxHeapSize = "2048m"
+    systemProperty 'spring.profiles.active', 'integrationtest'
+    systemProperty 'junit.extensions.autodetection.enabled', 'true'
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'false'
+}
+
+task e2etest(type: Test) {
+    description = 'Runs the tests including a running database.'
+    group = 'verification'
+
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching '*E2ETest'
+        excludeTestsMatching '*IntegrationTest'
+    }
+    minHeapSize = "512m"
+    maxHeapSize = "2048m"
+    systemProperty 'spring.profiles.active', 'e2etest'
+    systemProperty 'junit.extensions.autodetection.enabled', 'true'
+    systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        html.required = true
+    }
+    executionData fileTree(buildDir).include("/jacoco/*.exec")
+    afterEvaluate {
+        // exclude non project code from coverage
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/google/**', '**/proto/**', 'dreipc/graphql/**',
+                    '**/models/**', '**/model/**','**/config/**',
+                    '**/exceptions/**','**/exception/**',
+            ])
+        }))
+    }
+}

@@ -1,0 +1,72 @@
+server:
+  port: 80
+
+spring:
+  application:
+    name: @name@
+    version: @version@
+    description: Importer for xCurator data sources.
+  security:
+    client-id: asset-management # ToDo: Adjust properly due to project requirements
+  data:
+    mongodb:
+      username: ${MONGO_USERNAME:dreipc}
+      password: ${MONGO_PASSWORD:secret}
+      database: ${MONGO_DATABASE:example-database}
+      port: ${MONGO_PORT:27017}
+      host: ${MONGO_HOST:localhost}
+      auto-index-creation: true
+  redis:
+    cluster:
+      nodes: ${REDIS_HOST:localhost}:${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:password}
+    namespace: ${REDIS_NAMESPACE:sess}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:dreipc}
+    password: ${RABBITMQ_PASSWORD:password}
+    exchange: assets
+    template:
+      exchange: assets
+
+### Kubernetes Health ###
+management:
+  endpoint:
+    health:
+      enabled: true
+      probes:
+        enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      cors:
+        allowed-origins: "*"
+        allowed-methods: GET, POST
+      base-path: /manage
+      path-mapping:
+        prometheus: metrics
+      exposure:
+        include: [ "health", "prometheus" ]
+
+mongock:
+  migration-scan-package:
+    - de.dreipc.xcurator.xcuratorimportservice.changelog
+
+asset-service:
+  project-id: ${ASSET_MANAGEMENT_PROJECT_ID:6334534d2583b028b2cef7e0}
+
+expodb:
+  host: https://expotest.bsz-bw.de/blm/digitaler-katalog/selekt?mim=json
+  maxItemCount: 100000
+
+ap:
+  tinHost: https://servicetin.adlibhosting.com/te4/wwwopac.ashx?command=search&database=collectTEphotos3&search=pointer%20353&output=json&xmltype=grouped
+  sparqlEndpoint: https://lod.uba.uva.nl/_api/datasets/UB-UVA/Beeldbank/services/virtuoso/sparql
+  tinItemCount: 0
+  beeldbankItemCount: 100000
+
+importer:
+  enabled: ${IMPORT_ENABLED:false}

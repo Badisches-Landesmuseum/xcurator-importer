@@ -1,0 +1,15 @@
+server:
+  port: 8082
+
+security:
+  enabled: true
+
+expodb:
+  maxItemCount: 400
+
+ap:
+  tinItemCount: 0
+  beeldbankItemCount: 400
+  
+importer:
+  enabled: true

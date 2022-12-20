@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package dreipc.xcurator.proto;
+option java_package = "dreipc.xcurator.proto";
+option java_outer_classname = "XCuratorProtos";
+
+import "google/protobuf/timestamp.proto";
+
+
+message MuseumObjectProto {
+  string id = 1;
+  string externalId = 3;  // TODO: External ids as list
+  repeated TextContentProto titles = 4;
+  repeated TextContentProto descriptions = 5; // overlook in the other collection.
+  optional google.protobuf.Timestamp latestDate = 6;
+  optional google.protobuf.Timestamp earliestDate = 7;
+  google.protobuf.Timestamp createdAt = 8;
+  google.protobuf.Timestamp updatedAt = 9;
+  repeated string keywords = 10;
+  LocationProto location = 11;
+  repeated string materials = 12;
+  repeated string assetIds = 13;
+  DateRangeProto dateRange = 14;
+
+}
+
+message DateRangeProto {
+  google.protobuf.Timestamp start = 1;
+  google.protobuf.Timestamp end = 2;
+  string epoch = 3;
+  string  name = 4;
+}
+
+
+message TextContentProto {
+  string id = 1;
+  bool originalText = 2;
+  string languageCode = 3;
+  string  content = 4;
+}
+
+
+message TopicProto {
+  string id = 1;
+  float weight = 2;
+  repeated string labels = 3;
+  string sourceId = 4;
+
+}
+
+
+
+message MuseumObjectDeletedEvent {
+  string id = 1;
+}
+
+message MuseumObjectSyncProto {
+  string  syncId = 1;
+  MuseumObjectProto museumObject = 2;
+}
+
+message MuseumImageProto {
+  string id = 1;
+  string assetId = 2;
+  string externalId = 3;
+  string title = 4;
+  string sourceUrl = 5;
+  google.protobuf.Timestamp createdAt = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+
+}
+
+message LocationProto {
+  optional float longitude = 1;
+  optional float latitude = 2;
+  string name = 3;
+  string countryName = 4;
+}

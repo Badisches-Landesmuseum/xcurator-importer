@@ -1,0 +1,6 @@
+# Please check the GraphQL Library 'de.dreipc:graphql' for any updates
+
+enum SortDirection {
+    ASC
+    DESC
+}

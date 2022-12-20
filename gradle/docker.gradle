@@ -1,0 +1,148 @@
+/***
+ *  DOCKER GRADLE SCRIPT
+ *
+ *  Documentation: https://bmuschko.github.io/gradle-docker-plugin/
+ *
+ *  This jenkins contains Tasks for:
+ *  - building Java Docker Images
+ *  - accessing the local Docker Daemon
+ *  - deploying docker images
+ *  - integration testing with docker dependencies
+ *
+ *  Depenencies:
+ *  - Java language
+ *  - System Environment Variables (REPO_3PC_USERNAME || REPO_3PC_PWD) to access the 3pc Repository
+ *  - System Environment Variables (JAVA_OPTS_GLOBAL_DEFAULTS ||  JAVA_OPTS_SPECIFIC) to allow changing JAVA_OPTS parameters without changing source code
+ ***/
+
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "com.bmuschko:gradle-docker-plugin:7.3.0"
+    }
+}
+
+apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+apply plugin: com.bmuschko.gradle.docker.DockerSpringBootApplicationPlugin
+
+
+import com.bmuschko.gradle.docker.tasks.container.*
+import com.bmuschko.gradle.docker.tasks.image.*
+import groovy.transform.Field
+import org.gradle.internal.os.OperatingSystem
+
+@Field final String DOCKER_DAEMON_LOCAL = OperatingSystem.current().isWindows() ? "tcp://127.0.0.1:2375" : "unix:///var/run/docker.sock"
+
+@Field final String REPOSITORY_HOST = 'nexus.3pc.de'
+@Field final String REPOSITORY_USERNAME = System.getenv('REPO_3PC_USERNAME')
+@Field final String REPOSITORY_PASSWORD = System.getenv('REPO_3PC_PWD')
+@Field final String PROJECT_DEFAULT_NAMESPACE = '3pc'
+
+@Field final Map JAVA_BASE_IMAGES = [
+        17: 'nexus.3pc.de/java:17',
+]
+
+@Field final Integer DEFAULT_EXPOSE_PORT = 80
+
+// Any permanent settings unique to application
+@Field final String JAVA_OPTS_HARDCODED = ''
+// If no variables found provided by e.g. Kubernetes, fallback
+@Field final String JAVA_OPTS_LOCAL_DEFAULTS =
+    ' -Djava.security.egd=file:/dev/./urandom -XX:TieredStopAtLevel=1' +
+    ' -Dspring.jmx.enabled=true -Dspring.config.location=classpath:/application.yml' +
+    ' -Djava.awt.headless=true' +
+    ' -Dfile.encoding=UTF-8 -DLC_CTYPE=UTF-8'
+
+private String namespace(){
+    if(!project.hasProperty('group'))
+        return PROJECT_DEFAULT_NAMESPACE
+
+    if(group.startsWith('dreipc')) {
+        String[] namespaceSplit = group.split('\\.')
+        String namespace = "${namespaceSplit[1]}/"
+        if(namespaceSplit.length > 2){
+            String[] subNamespace = new String[namespaceSplit.length - 2]
+            for(int i = 2; i < namespaceSplit.length; i++)
+                subNamespace[i-2] = namespaceSplit[i]
+            namespace += subNamespace.join('/')
+        }
+        return namespace.toLowerCase()
+    } else {
+        return group
+    }
+}
+
+private String dockerImageName(){
+    return System.getenv("CI_DOCKER_NAMEONLY") ?: "$REPOSITORY_HOST/${namespace()}/$rootProject.name" // allow CI to override image path (e.g. add /temp/ to the path)
+}
+
+afterEvaluate { //afterEvaluate to read project.version which is undefined before
+    String dockerImageNameVersioned = "${dockerImageName()}:$project.version".toString()
+    ext["dockerImageNameVersioned"] = dockerImageNameVersioned
+
+    docker {
+        url = DOCKER_DAEMON_LOCAL
+
+        springBootApplication {
+            baseImage = "nexus.3pc.de/java:${sourceCompatibility.majorVersion.toInteger()}"
+            ports = [DEFAULT_EXPOSE_PORT]
+            images.add(dockerImageNameVersioned)
+        }
+
+        registryCredentials {
+            url = REPOSITORY_HOST
+            username = REPOSITORY_USERNAME
+            password = REPOSITORY_PASSWORD
+        }
+    }
+
+    task createDockerfile(type: Dockerfile) {
+        group 'docker'
+        String jarName = "$rootProject.name-$rootProject.version"
+        destFile = project.file('build/Dockerfile')
+
+        /**
+        Building the output docker image, if you change the base-image here,
+        than make shure that the Docker Image of the privious stage is compatible with this image.
+        Meaning: If you want to build an Alpine Docker Image, make sure that the previous Stage (jlink)
+        is also running on an Alpine Docker Container to build the reduced JVM.
+
+        @see <a href="GitLab Intermediate Image">https://gitlab.3pc.de/3pc-java/dockerfiles/java</a>
+         **/
+        //
+        from JAVA_BASE_IMAGES[sourceCompatibility.majorVersion.toInteger()]
+
+        instruction  "COPY libs/${jarName}.jar /app.jar"
+        exposePort docker.springBootApplication.ports
+
+
+        environmentVariable('JAVA_OPTS_LOCAL_DEFAULTS',JAVA_OPTS_LOCAL_DEFAULTS)
+        environmentVariable('JAVA_OPTS_HARDCODED',JAVA_OPTS_HARDCODED)
+        entryPoint('sh', '-c', 'java ${JAVA_OPTS_GLOBAL_DEFAULTS_11:-$JAVA_OPTS_LOCAL_DEFAULTS} $JAVA_OPTS_SPECIFIC $JAVA_OPTS_HARDCODED -jar /app.jar')
+    }
+
+    task buildImage(type: DockerBuildImage) {
+        group 'docker'
+        description "Builds and deploys the Docker image to the local DeploymentServer||Registry [${DOCKER_DAEMON_LOCAL}||${REPOSITORY_HOST}]"
+        dependsOn createDockerfile
+        inputDir = project.file('build')
+        images.add(dockerImageNameVersioned)
+    }
+
+    task pushImage(type: DockerPushImage) {
+        group 'docker'
+        description "Push Image to the 3PC private Repository ${REPOSITORY_HOST}"
+        images.add(dockerImageNameVersioned)
+    }
+
+    task removeImage(type: DockerRemoveImage) {
+        group 'docker'
+        description "Remove Versioned Docker image from the local Docker Daemon."
+        targetImageId { dockerImageNameVersioned }
+        force = true
+        onError { System.out.println("No previous versioned image to delete") }
+    }
+}

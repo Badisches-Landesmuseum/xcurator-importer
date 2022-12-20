@@ -1,0 +1,10 @@
+importer:
+  enabled: true
+
+expodb:
+  host: https://expotest.bsz-bw.de/blm/cue/selekt?mim=json
+  maxItemCount: 4000
+
+ap:
+  host: https://servicetin.adlibhosting.com/te4/wwwopac.ashx?command=search&database=collectTEphotos3&search=pointer%20353&output=json&xmltype=grouped
+  maxItemCount: 0

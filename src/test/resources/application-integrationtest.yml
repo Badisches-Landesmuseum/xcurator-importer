@@ -1,0 +1,25 @@
+spring:
+  autoconfigure:
+    exclude: >
+      org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration,
+      org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration,
+      org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration,
+      org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,
+  main:
+    allow-bean-definition-overriding: true
+  rabbitmq:
+    listener:
+      simple:
+        auto-startup: false
+
+management:
+  health:
+    mongo:
+      enabled: false
+    rabbit:
+      enabled: false
+
+
+
+mongock:
+  enabled: false

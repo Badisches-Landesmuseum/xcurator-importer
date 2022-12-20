@@ -1,0 +1,24 @@
+# Please check the GraphQL Library 'de.dreipc:graphql' for any updates
+
+scalar _FieldSet
+
+# Relay Support (DGS Netflix only)
+directive @connection on OBJECT | INTERFACE
+
+# Federation
+directive @key(fields: _FieldSet!) on OBJECT | INTERFACE
+directive @extends on OBJECT | INTERFACE
+directive @external on FIELD_DEFINITION | INPUT_OBJECT
+directive @requires(fields: _FieldSet!) on FIELD_DEFINITION
+directive @provides(fields: _FieldSet!) on FIELD_DEFINITION
+directive @shareable on OBJECT| FIELD_DEFINITION
+
+# Security
+directive @isAuthenticated on FIELD_DEFINITION | OBJECT
+directive @hasRole(roles: [UserRole!]) on FIELD_DEFINITION | OBJECT
+enum UserRole{
+    ADMIN,
+    EDITOR,
+    USER
+}
+

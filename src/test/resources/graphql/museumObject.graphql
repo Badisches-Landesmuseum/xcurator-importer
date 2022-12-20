@@ -1,0 +1,18 @@
+query MuseumObject($id: ID!) {
+    museumObject(where: { id: $id }) {
+        id
+        materials
+        keywords
+        location {
+            latitude
+            longitude
+            name
+        }
+        techniques
+        images {
+            id
+        }
+        materials
+        __typename
+    }
+}

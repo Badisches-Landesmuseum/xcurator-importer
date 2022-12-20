@@ -1,0 +1,170 @@
+"""----------------------------------Federated----------------------------------"""
+
+interface Asset @key(fields: "id") @extends {
+    id: ID! @external
+}
+
+type Image implements Asset  @key(fields : "id") @extends  {
+    id: ID! @external
+}
+
+type Query {
+    museumObject(where: MuseumObjectUniqueInput!): MuseumObject!
+    story(where: StoryUniqueInput!): Story!
+    stories(where:StoryWhereInput!, orderBy: [StoryOrderByInput!], first: Int = 10, skip: Int = 0 ): StoryConnection!
+}
+
+type Mutation {
+    createStory(create: CreateStory): Story!
+    createModule(connect: ConnectStory, museumObjectsId:String!): Module!
+    sync: Int!
+}
+
+
+input  StoryUniqueInput {
+    id: ID!
+}
+
+type StoryEdge {
+    node: Story
+    cursor: String
+}
+
+
+type StoryConnection {
+    edges: [StoryEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+}
+
+input StoryOrderByInput {
+    updatedAt: SortDirection
+    createdAt: SortDirection
+}
+
+
+input StoryWhereInput {
+    title: StringFilter
+    garbage: Boolean
+    updatedAt: DateTimeFilter
+    createdAt: DateTimeFilter
+}
+
+
+input ConnectStory {
+    storyId: String!
+}
+
+
+input ConnectModule {
+    artifactsIds: [String!]!
+    storyId: String!
+}
+
+input CreateStory {
+    museumObjectIds: [String!]!
+    topics: [String!]
+
+}
+
+type Story {
+    id: ID!
+    modules:  [Module!]!
+    topics: [String!]!
+}
+
+## MuseumObject -> Artifact
+
+input UpdateMuseumObject {
+    id: String!
+    moduleId: String!
+
+}
+
+input MuseumObjectUniqueInput{
+    id: ID!
+}
+
+
+"An object with an ID"
+interface Node {
+    "The ID of an object"
+    id: ID!
+}
+
+
+type MuseumObjectConnection {
+    edges: [MuseumObjectEdge]
+    pageInfo: PageInfo!
+    totalCount: Int!
+}
+
+type MuseumObjectEdge {
+    node: MuseumObject
+    cursor: String
+}
+
+# preferedLangugae = de
+
+
+type Module {
+    id: ID!
+    museumObject: MuseumObject!
+}
+
+
+
+type MuseumObject implements Node @key(fields : "id") {
+    id:ID!
+    externalId:String!
+    title: TextContent!
+    description:TextContent!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+    keywords: [String!]!
+    materials: [String!]!
+    location: Location!
+    techniques: [String!]!
+    images: [Image!]!
+    dateRange: DateRange
+    topics: [MuseumObjectTopic!]!
+}
+
+type MuseumObjectTopic {
+    id: ID!
+    labels: [String!]!
+    weight: Float!
+}
+
+type TextContent {
+    content: String!
+    entities: [NamedEntity!]!
+}
+type DateRange {
+    name: String!
+    start: DateTime
+    end: DateTime
+    epoch: String!
+}
+
+
+type Location   {
+    name: String
+    longitude: Float
+    latitude: Float
+}
+
+
+
+input MuseumObjectTitleWhereInput{
+    title: StringFilter
+}
+
+input MuseumObjectOrderByInput {
+    updatedAt: SortDirection
+    createdAt: SortDirection
+}
+input MuseumObjectWhereInput {
+    updatedAt: DateTimeFilter
+    createdAt: DateTimeFilter
+}

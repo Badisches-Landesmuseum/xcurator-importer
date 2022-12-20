@@ -1,0 +1,9 @@
+# Please check the GraphQL Library 'de.dreipc:graphql' for any updates
+
+# Relay
+type PageInfo {
+    hasPreviousPage: Boolean!
+    hasNextPage: Boolean!
+    startCursor: String
+    endCursor: String
+}
