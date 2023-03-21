@@ -9,21 +9,41 @@ type Image implements Asset  @key(fields : "id") @extends  {
 }
 
 type Query {
-    museumObject(where: MuseumObjectUniqueInput!): MuseumObject!
+    museumObject(where: MuseumObjectUniqueInput!, preferredLanguage:Language): MuseumObject!
+    museumObjects(where: MuseumObjectSearchWhereInput,orderBy:[MuseumObjectSearchOrderByInput], first: Int = 10,  skip: Int = 0,preferredLanguage:Language): MuseumObjectResultConnection!
+    exceptionalMuseumObjects(where: MuseumObjectSearchWhereInput,orderBy:[MuseumObjectSearchOrderByInput], first: Int = 10,  skip: Int = 0): ExceptionalMuseumObjectResultConnection!
+
     story(where: StoryUniqueInput!): Story!
     stories(where:StoryWhereInput!, orderBy: [StoryOrderByInput!], first: Int = 10, skip: Int = 0 ): StoryConnection!
+
+    smartKeywords(first:Int = 10, skip: Int=0): [String!]!
+
+    "Get a Material Distribution Statistic."
+    materialDistribution: [MaterialGroup!]!
+    "Get a Country Distribution Statistic."
+    countryDistribution: [CountryGroup!]!
+    "Get an Epoch Distribution Statistic."
+    epochDistribution: [EpochGroup!]!
+    "Search for similar images by a given Image file, url or a max 77 Token long text"
+    similarMuseumObjects(where: ImageMuseumObjectSearchWhereInput!, first:Int = 10, skip:Int = 0): MuseumObjectResultConnection!
+    "Search for images by a given RGB value"
+    museumObjectsByColor(where: MuseumObjectColorSearchWhereInput! first: Int = 10,  skip: Int = 0): MuseumObjectColorResultConnection!
 }
+
 
 type Mutation {
     createStory(create: CreateStory): Story!
     createModule(connect: ConnectStory, museumObjectsId:String!): Module!
     sync: Int!
+    createIndexes:Int
+
 }
 
 
 input  StoryUniqueInput {
     id: ID!
 }
+
 
 type StoryEdge {
     node: Story
@@ -104,9 +124,6 @@ type MuseumObjectEdge {
     cursor: String
 }
 
-# preferedLangugae = de
-
-
 type Module {
     id: ID!
     museumObject: MuseumObject!
@@ -128,6 +145,7 @@ type MuseumObject implements Node @key(fields : "id") {
     images: [Image!]!
     dateRange: DateRange
     topics: [MuseumObjectTopic!]!
+    dataSource: DataSource!
 }
 
 type MuseumObjectTopic {
@@ -151,10 +169,14 @@ type DateRange {
 type Location   {
     name: String
     longitude: Float
+    countryName: String
     latitude: Float
 }
 
 
+input MuseumObjectColorSearchWhereInput {
+    color: RGB!
+}
 
 input MuseumObjectTitleWhereInput{
     title: StringFilter
@@ -167,4 +189,118 @@ input MuseumObjectOrderByInput {
 input MuseumObjectWhereInput {
     updatedAt: DateTimeFilter
     createdAt: DateTimeFilter
+}
+
+
+type MaterialGroup {
+    "Material name"
+    name: String!
+    "Amount of museum objects of this material."
+    count: Int!
+    "Percentage ratio of museum objects in the whole (out of 100%)"
+    ratio: Int!
+}
+
+
+type CountryGroup{
+    "Country name"
+    name: String!
+    "Amount of museum objects in this country."
+    count: Int!
+    "Percentage ratio of museum objects in this country"
+    ratio: Int!
+}
+
+type EpochGroup {
+    "Epoch name"
+    name: String!
+    "Amount of museum objects in this epoch."
+    count: Int!
+    "Percentage ratio of museum objects in this epoch"
+    ratio: Int!
+    "start year of an epoch"
+    start: Int!
+    "end year of an epoch"
+    end: Int!
+}
+
+
+type MuseumObjectResultConnection {
+    edges: [MuseumObjectSearchResultEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+    keywords: [String!]!
+}
+
+
+type MuseumObjectSearchResultEdge {
+    node: MuseumObject!
+    cursor: String!
+}
+
+input MuseumObjectSearchWhereInput {
+    keywords: [String!]
+    materials: [String!]
+    countries: [String!]
+    epochs:[String!]
+}
+
+
+input MuseumObjectSearchOrderByInput {
+    updatedAt: SortDirection
+    createdAt: SortDirection
+
+}
+enum Language {
+    DE,
+    NL,
+    EN
+}
+
+enum DataSource {
+    TIN,
+    EXPODB,
+    BEELDBANK
+}
+
+type ExceptionalMuseumObjectSearchResultEdge {
+    node: ExceptionalMuseumObject!
+    cursor: String!
+}
+
+type ExceptionalMuseumObjectResultConnection {
+    edges: [ExceptionalMuseumObjectSearchResultEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
+    keywords: [String!]!
+}
+
+
+type ExceptionalMuseumObject {
+    museumObject: MuseumObject!
+    reason: [ExceptionalReason!]!
+}
+
+enum ExceptionalReason {
+    MATERIAL
+}
+
+input ImageMuseumObjectSearchWhereInput {
+    projectId: ID!
+    imageId: ID!
+}
+
+type MuseumObjectColorSearchResult {
+    museumObject: MuseumObject!
+}
+
+type MuseumObjectColorSearchResultEdge {
+    node: MuseumObjectColorSearchResult!
+    cursor: String!
+}
+
+type MuseumObjectColorResultConnection {
+    edges: [MuseumObjectColorSearchResultEdge!]!
+    pageInfo: PageInfo!
+    totalCount: Int!
 }

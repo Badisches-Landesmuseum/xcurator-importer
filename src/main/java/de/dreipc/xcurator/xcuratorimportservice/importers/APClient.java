@@ -103,21 +103,21 @@ public class APClient implements Client {
         try {
             return importObjects(properties.getTinItemCount()).size();
         } catch (Exception e) {
-            log.warn("Did not import: " + getClientName() + "cause:", e);
+            log.warn("Did not import: " + getDataSource() + "cause:", e);
             return 0;
         }
     }
 
     public List<MuseumObject> importObjects(int totalCount) {
         if (totalCount == 0) {
-            log.info("No data were selected for: " + getClientName() + " import");
+            log.info("No data were selected for: " + getDataSource() + " import");
             return Collections.emptyList();
         }
 
         var totalNumberOfAvailableData = getTotalAvailableData();
         log.info("There are  " + totalNumberOfAvailableData + " available data in their storage.");
-        var total = totalNumberOfAvailableData < totalCount ? totalNumberOfAvailableData : totalCount;
-        log.info("Start importing from: " + getClientName());
+        var total = Math.min(totalNumberOfAvailableData, totalCount);
+        log.info("Start importing from: " + getDataSource());
 
         return StreamUtil.getUrlStreams(total, this::buildBatchFetchingUrl)
                 .map(this::processAndSave)
@@ -129,9 +129,7 @@ public class APClient implements Client {
     private List<MuseumObject> processAndSave(URL url) {
         try {
             var museumResults = StreamUtil.stream(requestApi(url)).map(this::parseItem).filter(Optional::isPresent).map(Optional::get).toList();
-
-            var saved = storeMuseumObjectCommand.save(museumResults);
-            return saved;
+            return storeMuseumObjectCommand.save(museumResults);
         } catch (Exception e) {
             log.error("batch could not be saved", e);
             return new ArrayList<>();
@@ -188,15 +186,16 @@ public class APClient implements Client {
             var externalId = getStringOrDefault(documentJson, "@priref");
 
             var titles = documentJson.get("title").findValues("text").stream().map(text -> TextContent.builder()
-                    .content(text.asText())
-                    .projectId(projectId)
-                    .languageCode(LanguageCode.DUTCH.toString())
-                    .sourceId(id)
-                    .textType(TextType.TITLE)
-                    .createdAt(Instant.now())
-                    .updatedAt(Instant.now())
-                    .originalText(true)
-                    .build()).toList();
+                            .content(text.asText())
+                            .projectId(projectId)
+                            .languageCode(getDefaultLanguage())
+                            .sourceId(id)
+                            .textType(TextType.TITLE)
+                            .createdAt(Instant.now())
+                            .updatedAt(Instant.now())
+                            .originalText(true)
+                            .build())
+                    .toList();
 
             var dateRange = getDateStampOrDefault(documentJson);
 
@@ -208,6 +207,7 @@ public class APClient implements Client {
                     .createdAt(Instant.now())
                     .updatedAt(Instant.now())
                     .dateRange(dateRange)
+                    .dataSource(getDataSource())
                     .location(Location.builder().build())
                     .build();
 
@@ -222,7 +222,12 @@ public class APClient implements Client {
     }
 
     @Override
-    public ClientName getClientName() {
-        return ClientName.TIN;
+    public DataSource getDataSource() {
+        return DataSource.TIN;
+    }
+
+    @Override
+    public LanguageCode getDefaultLanguage() {
+        return LanguageCode.nl;
     }
 }

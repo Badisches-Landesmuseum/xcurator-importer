@@ -12,4 +12,5 @@ public class WikiDataBaseEntity {
     String name;
     String description;
     URL imageUrl;
+    URL articleUrl;
 }

@@ -1,0 +1,16 @@
+extend  type Query {
+    wikipediaEntities(where: WikiPediaEntitiesInput!):  [WikiPediaEntity]!
+}
+
+input  WikiPediaEntitiesInput {
+    titles: [String!]!
+    language: Language!
+}
+
+type WikiPediaEntity {
+    id: String!
+    name: String!
+    description: String!
+    imageUrl: URL
+    articleUrl: URL!
+}

@@ -31,7 +31,7 @@ public class StoreModuleCommand {
 
         var storyExists = storyRepository.existsById(storyId);
         if (!storyExists)
-            new NotFoundException("Problem creating module, story id was not found: " + storyId);
+            throw new NotFoundException("Problem creating module, story id was not found: " + storyId);
 
         var module = Module.builder()
                 .id(new ObjectId())

@@ -25,9 +25,12 @@ public class TextContent implements ProtoModel, TimeStamp, IdentifiedObject {
     @NonNull
     @Builder.Default
     String content = "";
-    boolean originalText;
+    @Indexed
     @NonNull
-    String languageCode;
+    Boolean originalText;
+    @NonNull
+    @Indexed
+    LanguageCode languageCode;
     @NonNull
     @Indexed
     ObjectId sourceId;
@@ -57,7 +60,7 @@ public class TextContent implements ProtoModel, TimeStamp, IdentifiedObject {
                 .setId(id.toString())
                 .setContent(content)
                 .setOriginalText(originalText)
-                .setLanguageCode(languageCode);
+                .setLanguageCode(languageCode.toString());
 
         return proto.build();
     }

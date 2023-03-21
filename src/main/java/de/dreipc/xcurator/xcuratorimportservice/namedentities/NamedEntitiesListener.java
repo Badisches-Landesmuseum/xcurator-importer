@@ -58,7 +58,7 @@ public class NamedEntitiesListener {
 
             } catch (
                     Exception e) {
-                log.error("Did not saved entities", e);
+                log.error("Did not saved entities");
             }
         });
 

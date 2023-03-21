@@ -17,14 +17,6 @@ public class TopicRepositoryImpl implements TopicRepositoryCustom {
         this.template = template;
     }
 
-    @Override
-    public List<ObjectId> findAllIdsBySourceIds(List<ObjectId> sourceIds) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("sourceId").in(sourceIds));
-        query.fields().include("_id");
-        var results = template.find(query, MuseumObjectTopic.class);
-        return results.stream().map(MuseumObjectTopic::getId).toList();
-    }
 
     @Override
     public void deleteAllBySourceId(List<ObjectId> museumObjectIds) {

@@ -3,13 +3,3 @@ server:
 
 security:
   enabled: true
-
-expodb:
-  maxItemCount: 400
-
-ap:
-  tinItemCount: 0
-  beeldbankItemCount: 400
-  
-importer:
-  enabled: true

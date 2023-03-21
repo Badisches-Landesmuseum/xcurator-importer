@@ -18,12 +18,12 @@ public class NamedEntityRepositoryImpl implements NamedEntityRepositoryCustom {
     }
 
     @Override
-    public List<ObjectId> findAllIdsBySourceIds(List<ObjectId> sourceIds) {
+    public List<ObjectId> findAllExistedSourceIds(List<ObjectId> sourceIds) {
         Query query = new Query();
         query.addCriteria(Criteria.where("sourceId").in(sourceIds));
-        query.fields().include("_id");
+        query.fields().include("sourceId");
         var results = template.find(query, NamedEntity.class);
-        return results.stream().map(NamedEntity::getId).toList();
+        return results.stream().map(NamedEntity::getSourceId).toList();
     }
 
     @Override

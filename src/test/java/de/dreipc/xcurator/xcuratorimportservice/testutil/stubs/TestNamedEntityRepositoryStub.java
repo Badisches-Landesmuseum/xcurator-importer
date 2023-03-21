@@ -24,12 +24,12 @@ public class TestNamedEntityRepositoryStub extends RepositoryStub<NamedEntity> i
         this.memoryStorage.entrySet().stream()
                 .filter(entryset -> sourceIDS.contains(entryset.getValue().getSourceId()))
                 .map(Map.Entry::getKey)
-                .map(key -> this.memoryStorage.remove(key));
+                .map(this.memoryStorage::remove);
     }
 
 
     @Override
-    public List<ObjectId> findAllIdsBySourceIds(List<ObjectId> sourceIds) {
+    public List<ObjectId> findAllExistedSourceIds(List<ObjectId> sourceIds) {
 
         return sourceIds.stream().map(this::findAllBySourceId)
                 .collect(Collectors.toList())
@@ -44,7 +44,7 @@ public class TestNamedEntityRepositoryStub extends RepositoryStub<NamedEntity> i
         this.memoryStorage.values().stream()
                 .filter(object -> museumObjectIds.contains(object.getMuseumObjectId()))
                 .map(NamedEntity::getId)
-                .map(id -> memoryStorage.remove(id));
+                .map(memoryStorage::remove);
     }
 
 

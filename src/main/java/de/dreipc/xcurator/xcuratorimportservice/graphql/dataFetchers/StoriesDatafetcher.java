@@ -18,6 +18,7 @@ public class StoriesDatafetcher {
 
     private final StoryRepository repository;
 
+
     public StoriesDatafetcher(StoryRepository repository) {
         this.repository = repository;
     }
@@ -34,5 +35,6 @@ public class StoriesDatafetcher {
                 repository.searchStories(first, skip, where, orderBy, environment)
         );
     }
+
 
 }

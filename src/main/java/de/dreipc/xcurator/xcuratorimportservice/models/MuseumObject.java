@@ -44,7 +44,6 @@ public class MuseumObject implements IdentifiedObject, ProtoModel, TimeStamp {
     Instant updatedAt;
     @Builder.Default
     List<String> keywords = new ArrayList<>();
-    String provider;
     @Builder.Default
     List<String> materials = new ArrayList<>();
     @Builder.Default
@@ -59,7 +58,8 @@ public class MuseumObject implements IdentifiedObject, ProtoModel, TimeStamp {
     List<ObjectId> moduleIds = new ArrayList<>();
     @NonNull
     ObjectId projectId;
-
+    @NonNull
+    DataSource dataSource;
 
     @Tolerate
     public MuseumObject() {
@@ -101,6 +101,7 @@ public class MuseumObject implements IdentifiedObject, ProtoModel, TimeStamp {
             }
 
         });
+
 
         builder.addAllMaterials(materials.stream().toList());
         builder.addAllKeywords(keywords.stream().toList());

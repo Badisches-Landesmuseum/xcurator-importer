@@ -1,9 +1,12 @@
 package de.dreipc.xcurator.xcuratorimportservice.importers;
 
-import de.dreipc.xcurator.xcuratorimportservice.models.ClientName;
+import de.dreipc.xcurator.xcuratorimportservice.models.DataSource;
+import de.dreipc.xcurator.xcuratorimportservice.models.LanguageCode;
 
 public interface Client {
-    ClientName getClientName();
+    DataSource getDataSource();
+
+    LanguageCode getDefaultLanguage();
 
     int importObjects();
 

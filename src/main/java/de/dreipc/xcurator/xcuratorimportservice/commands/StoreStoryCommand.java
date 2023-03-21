@@ -30,7 +30,7 @@ public class StoreStoryCommand {
                 .topics(createStory.getTopics() != null ? createStory.getTopics() : Collections.emptyList())
                 .build());
 
-        var museumIds = createStory.getMuseumObjectIds().stream().map(id -> new ObjectId(id)).toList();
+        var museumIds = createStory.getMuseumObjectIds().stream().map(ObjectId::new).toList();
         storeModuleCommand.execute(museumIds, storyId);
 
         return story;

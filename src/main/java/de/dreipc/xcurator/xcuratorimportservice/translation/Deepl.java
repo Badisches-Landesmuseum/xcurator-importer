@@ -19,11 +19,15 @@ public class Deepl implements Translator {
         return translate(text, language, null);
     }
 
+
     @Override
     public String translate(@NonNull String text, @NonNull Locale language, Locale source) throws TranslationException {
-        String sourceLanguage = source != null ? source.getLanguage(): null;
+        if (text.isEmpty()) throw new IllegalArgumentException("The string is empty");
+
+        String sourceLanguage = source != null ? source.toLanguageTag() : null;
+
         try {
-            var result =  deeplTranslator.translateText(text, sourceLanguage, language.getLanguage());
+            var result = deeplTranslator.translateText(text, sourceLanguage, language.toLanguageTag()); // en-US
             return result.getText();
         } catch (DeepLException e) {
             throw new TranslationException(e);

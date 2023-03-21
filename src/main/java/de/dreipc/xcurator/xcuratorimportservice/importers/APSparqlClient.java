@@ -82,7 +82,7 @@ public class APSparqlClient implements Client {
             return importObjects(properties.getBeeldbankItemCount());
 
         } catch (Exception e) {
-            log.warn("Did not import: " + getClientName() + "cause:", e);
+            log.warn("Did not import: " + getDataSource() + "cause:", e);
             return 0;
         }
     }
@@ -90,7 +90,7 @@ public class APSparqlClient implements Client {
     @Transactional
     public int importObjects(int totalCount) {
         if (totalCount == 0) {
-            log.info("No data were selected for: " + getClientName() + " import");
+            log.info("No data were selected for: " + getDataSource() + " import");
             return 0;
         }
 
@@ -99,7 +99,7 @@ public class APSparqlClient implements Client {
             totalCount = totalNumberOfAvailableData;
         log.info("There are  " + totalNumberOfAvailableData + " available data in their storage.");
         var total = Math.min(totalNumberOfAvailableData, totalCount);
-        log.info("Start importing from: " + getClientName());
+        log.info("Start importing from: " + getDataSource());
 
         var batchSize = 480;
         var batchCount = totalCount / batchSize;
@@ -113,8 +113,8 @@ public class APSparqlClient implements Client {
 
             var notExistingMuseumResults = museumResults.stream().filter(obj -> !museumObjectRepository.existsByExternalId(obj.getMuseumObject().getExternalId())).toList();
             var diff = museumResults.size() - notExistingMuseumResults.size();
-            log.info("Skipping " + diff + " Objects, due they already exist. Import " + notExistingMuseumResults.size() +" additional Objects ");
-            if(notExistingMuseumResults.size() == 0){
+            log.info("Skipping " + diff + " Objects, due they already exist. Import " + notExistingMuseumResults.size() + " additional Objects ");
+            if (notExistingMuseumResults.size() == 0) {
                 log.info("Nothing to import. Skip");
             } else {
                 storeMuseumObjectCommand.save(notExistingMuseumResults);
@@ -208,6 +208,7 @@ public class APSparqlClient implements Client {
                 .materials(Collections.emptyList()) // not provided
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
+                .dataSource(DataSource.BEELDBANK)
                 .build();
 
         var creator = JsonParserUtil.getStringOrDefault(jsonNode, "creator");
@@ -225,7 +226,7 @@ public class APSparqlClient implements Client {
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .content(titleString)
-                .languageCode(LanguageCode.DUTCH.label)
+                .languageCode(getDefaultLanguage())
                 .originalText(true)
                 .textType(TextType.TITLE)
                 .build();
@@ -238,7 +239,7 @@ public class APSparqlClient implements Client {
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .content(descriptionString)
-                .languageCode(LanguageCode.DUTCH.label)
+                .languageCode(getDefaultLanguage())
                 .textType(TextType.DESCRIPTION)
                 .originalText(true)
                 .build();
@@ -247,11 +248,10 @@ public class APSparqlClient implements Client {
         var images = new ArrayList<MuseumImage>();
         try {
             var sizeIndex = imageUrlString.lastIndexOf("full");
-            var maxSizeUrl = imageUrlString.substring(0,sizeIndex)+  "!1200,1200/0/default.jpg";
+            var maxSizeUrl = imageUrlString.substring(0, sizeIndex) + "!1200,1200/0/default.jpg";
             var imageUrl = new URL(maxSizeUrl);
             var fileName = imageUrlString.substring(imageUrlString.indexOf("2/") + 2);
             fileName = fileName.substring(0, fileName.indexOf("/"));
-
 
 
             var image = MuseumImage
@@ -297,7 +297,12 @@ public class APSparqlClient implements Client {
 
 
     @Override
-    public ClientName getClientName() {
-        return ClientName.BEELDBANK;
+    public DataSource getDataSource() {
+        return DataSource.BEELDBANK;
+    }
+
+    @Override
+    public LanguageCode getDefaultLanguage() {
+        return LanguageCode.nl;
     }
 }

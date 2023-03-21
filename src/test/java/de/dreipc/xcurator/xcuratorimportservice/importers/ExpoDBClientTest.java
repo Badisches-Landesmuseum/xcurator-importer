@@ -31,23 +31,17 @@ class ExpoDBClientTest {
 
     private static final CountryService countryService = new CountryService(new WikiData());
     private static ExpoDBClient client;
-    private static ExpoDBProperties properties;
-    private static AssetService assetService;
-    private static StoreMuseumObjectCommand storeMuseumObjectCommand;
 
     @BeforeAll
-    private static void setUp(@Autowired StoreMuseumObjectCommand _storeMuseumObjectCommand,
-                              @Autowired ExpoDBProperties _properties,
-                              @Autowired AssetService _assetService) {
-        properties = _properties;
-        assetService = _assetService;
-        storeMuseumObjectCommand = _storeMuseumObjectCommand;
+    public static void setUp(@Autowired StoreMuseumObjectCommand _storeMuseumObjectCommand,
+                             @Autowired ExpoDBProperties _properties,
+                             @Autowired AssetService _assetService) {
 
         var museumObjectRepository = mock(MuseumObjectRepository.class);
         when(museumObjectRepository.existsByExternalId(anyString())).thenReturn(false);
 
-        client = new ExpoDBClient(properties, storeMuseumObjectCommand, new ObjectMapper(), assetService,
-                                  museumObjectRepository, countryService);
+        client = new ExpoDBClient(_properties, _storeMuseumObjectCommand, new ObjectMapper(), _assetService,
+                museumObjectRepository, countryService);
     }
 
     @Test

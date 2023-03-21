@@ -43,6 +43,56 @@ public class APXMLClient {
         this.storeMuseumObjectCommand = storeMuseumObjectCommand;
     }
 
+    private static List<MuseumImage> getListMuseumsImagesOrDefault(Element element, ObjectId museumObjectId, ObjectId projectId) {
+        try {
+            var imagesNode = element.getElementsByTagName("Reproduction");
+            var images = new ArrayList<MuseumImage>();
+            for (int i = 0; i < imagesNode.getLength(); i++) {
+                Node node = imagesNode.item(i);
+
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    var museumImageBuilder = getMuseumsImage(((Element) node));
+                    museumImageBuilder.sourceId(museumObjectId);
+                    museumImageBuilder.projectId(projectId);
+
+                    images.add(museumImageBuilder.build());
+                }
+            }
+            return images;
+        } catch (Exception e) {
+            log.error("Error importing image, cause:", e);
+            return new ArrayList<>();
+        }
+    }
+
+    private static MuseumImage.MuseumImageBuilder getMuseumsImage(Element element) {
+        try {
+            var id = new ObjectId();
+            var imageHost = "https://servicetin.adlibhosting.com/te4/wwwopac.ashx?command=getcontent&server=images&width=400&height=1200";
+
+            var fileName = element
+                    .getElementsByTagName("reproduction.identifier_URL")
+                    .item(0)
+                    .getChildNodes()
+                    .item(0)
+                    .getNodeValue();
+
+            var title = element
+                    .getElementsByTagName("reproduction.reference")
+                    .item(0)
+                    .getChildNodes()
+                    .item(0)
+                    .getNodeValue();
+
+            var url = new URL(imageHost + "&value=" + fileName);
+            return MuseumImage.builder().id(id).fileName(fileName).title(title).sourceUrl(url).createdAt(Instant.now()).updatedAt(Instant.now());
+        } catch (Exception e) {
+            log.error("Image could not be parsed: ", e);
+            return null;
+        }
+
+    }
+
     public int importObjects(int totalCount) {
         var xmlContent = FileUtil.getResourceFileAsInputStream(XML_FILE_PATH);
         try {
@@ -79,21 +129,18 @@ public class APXMLClient {
         }
     }
 
-
-
     private List<MuseumObject> processAndSave(List<Optional<MuseumResult>> objects) {
         try {
             var museumResults = objects.stream().filter(Optional::isPresent).map(Optional::get).toList();
 
             var notExistingMuseumResults = museumResults.stream().filter(obj -> !museumObjectRepository.existsByExternalId(obj.getMuseumObject().getExternalId())).toList();
             var diff = museumResults.size() - notExistingMuseumResults.size();
-            log.info("Skipping " + diff + " Objects, due they already exist. Import " + notExistingMuseumResults.size() +" additional Objects ");
-            if(notExistingMuseumResults.size() == 0){
+            log.info("Skipping " + diff + " Objects, due they already exist. Import " + notExistingMuseumResults.size() + " additional Objects ");
+            if (notExistingMuseumResults.size() == 0) {
                 log.info("Nothing to import. Skip");
                 return new ArrayList<>();
             }
-            var saved = storeMuseumObjectCommand.save(notExistingMuseumResults);
-            return saved;
+            return storeMuseumObjectCommand.save(notExistingMuseumResults);
         } catch (Exception e) {
             log.error("batch could not be saved", e);
             return new ArrayList<>();
@@ -127,16 +174,16 @@ public class APXMLClient {
 
 
             var title = TextContent
-                            .builder()
-                            .content(titleString)
-                            .projectId(projectId)
-                            .languageCode(LanguageCode.DUTCH.toString())
-                            .sourceId(id)
-                            .textType(TextType.TITLE)
-                            .createdAt(Instant.now())
-                            .updatedAt(Instant.now())
-                            .originalText(true)
-                            .build();
+                    .builder()
+                    .content(titleString)
+                    .projectId(projectId)
+                    .languageCode(LanguageCode.nl)
+                    .sourceId(id)
+                    .textType(TextType.TITLE)
+                    .createdAt(Instant.now())
+                    .updatedAt(Instant.now())
+                    .originalText(true)
+                    .build();
 
             var dateRange = getDateStampOrDefault(elem);
 
@@ -147,83 +194,33 @@ public class APXMLClient {
                     .projectId(projectId)
                     .externalId(externalId)
                     .assetIds(images
-                                      .stream()
-                                      .map(MuseumImage::getId)
-                                      .toList())
+                            .stream()
+                            .map(MuseumImage::getId)
+                            .toList())
                     .createdAt(Instant.now())
                     .updatedAt(Instant.now())
                     .dateRange(dateRange)
+                    .dataSource(getDataSource())
                     .location(Location
-                                      .builder()
-                                      .build())
+                            .builder()
+                            .build())
                     .build();
 
             return Optional.of(MuseumResult
-                                       .builder()
-                                       .museumObject(museumObject)
-                                       .images(images)
-                                       .texts(List.of(title))
-                                       .build());
+                    .builder()
+                    .museumObject(museumObject)
+                    .images(images)
+                    .texts(List.of(title))
+                    .build());
         } catch (Exception e) {
             log.error("Unable to parse item, Error: " + e.getMessage());
             return Optional.empty();
         }
     }
 
-
-    private static List<MuseumImage> getListMuseumsImagesOrDefault(Element element, ObjectId museumObjectId, ObjectId projectId) {
+    private Instant getYear(Element element, String field) {
         try {
-            var imagesNode = element.getElementsByTagName("Reproduction");
-            var images = new ArrayList<MuseumImage>();
-            for(int i = 0; i < imagesNode.getLength(); i++){
-                Node node = imagesNode.item(i);
-
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    var museumImageBuilder = getMuseumsImage(((Element) node));
-                    museumImageBuilder.sourceId(museumObjectId);
-                    museumImageBuilder.projectId(projectId);
-
-                    images.add(museumImageBuilder.build());
-                }
-            }
-            return images;
-        } catch (Exception e) {
-            log.error("Error importing image, cause:", e);
-            return new ArrayList<>();
-        }
-    }
-
-
-    private static MuseumImage.MuseumImageBuilder getMuseumsImage(Element element) {
-        try {
-            var id = new ObjectId();
-            var imageHost = "https://servicetin.adlibhosting.com/te4/wwwopac.ashx?command=getcontent&server=images&width=400&height=1200";
-
-            var fileName = element
-                    .getElementsByTagName("reproduction.identifier_URL")
-                    .item(0)
-                    .getChildNodes()
-                    .item(0)
-                    .getNodeValue();
-
-            var title = element
-                    .getElementsByTagName("reproduction.reference")
-                    .item(0)
-                    .getChildNodes()
-                    .item(0)
-                    .getNodeValue();
-
-            var url = new URL(imageHost + "&value=" + fileName);
-            return MuseumImage.builder().id(id).fileName(fileName).title(title).sourceUrl(url).createdAt(Instant.now()).updatedAt(Instant.now());
-        } catch (Exception e) {
-            log.error("Image could not be parsed: ", e);
-            return null;
-        }
-
-    }
-    private Instant getYear(Element element, String field){
-        try{
-            var stringValue =  element
+            var stringValue = element
                     .getElementsByTagName(field)
                     .item(0)
                     .getChildNodes()
@@ -231,28 +228,31 @@ public class APXMLClient {
                     .getNodeValue();
             var year = Integer.parseInt(stringValue.trim());
             return JsonParserUtil.getInstantOrDefault(year);
-        }catch (Exception e)
-        {
+        } catch (Exception e) {
             return null;
         }
     }
 
     public DateRange getDateStampOrDefault(Element elem) {
-            var begin = getYear(elem, "production.date.start");
-            var end = getYear(elem, "production.date.end");
+        var begin = getYear(elem, "production.date.start");
+        var end = getYear(elem, "production.date.end");
 
-            var epoch = "";
-            if(end != null){
-                epoch = EpochService.extractEpoch(end);
-            } else if (begin != null){
-                epoch = EpochService.extractEpoch(end);
-            }
+        var epoch = "";
+        if (end != null) {
+            epoch = EpochService.extractEpoch(end);
+        }
 
-            return DateRange
-                    .builder()
-                    .start(begin)
-                    .end(end)
-                    .epoch(epoch)
-                    .build();
+        return DateRange
+                .builder()
+                .start(begin)
+                .end(end)
+                .epoch(epoch)
+                .build();
     }
+
+
+    public DataSource getDataSource() {
+        return DataSource.TIN;
+    }
+
 }

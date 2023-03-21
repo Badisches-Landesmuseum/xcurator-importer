@@ -1,8 +1,8 @@
 package de.dreipc.xcurator.xcuratorimportservice.repositories;
 
 
+import de.dreipc.xcurator.xcuratorimportservice.models.LanguageCode;
 import de.dreipc.xcurator.xcuratorimportservice.models.TextContent;
-import de.dreipc.xcurator.xcuratorimportservice.models.TextType;
 import org.bson.types.ObjectId;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public interface TextContentRepositoryCustom {
 
     List<TextContent> findAllBySourceId(ObjectId sourceId);
 
-    List<ObjectId> findAllIdsBySourceIdAndTextType(ObjectId sourceId, TextType textType);
+    List<ObjectId> findAllIdsByLanguageCode(LanguageCode languageCode);
 
     void deleteAllBySourceId(List<ObjectId> museumObjectIds);
 

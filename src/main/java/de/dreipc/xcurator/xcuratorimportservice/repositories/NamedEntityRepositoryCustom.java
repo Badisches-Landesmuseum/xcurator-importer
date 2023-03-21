@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface NamedEntityRepositoryCustom {
 
-    List<ObjectId> findAllIdsBySourceIds(List<ObjectId> sourceIds);
+    List<ObjectId> findAllExistedSourceIds(List<ObjectId> sourceIds);
 
     void deleteAllByMuseumObjectIds(List<ObjectId> museumObjectId);
 

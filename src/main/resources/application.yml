@@ -1,11 +1,16 @@
 server:
-  port: 80
+  port: 8080
 
 spring:
   application:
     name: @name@
     version: @version@
     description: Importer for xCurator data sources.
+  cache:
+    cache-names: wikidata, wikipedia
+    caffeine:
+      spec: maximumSize=2000,expireAfterAccess=24h
+    type: caffeine
   security:
     client-id: asset-management # ToDo: Adjust properly due to project requirements
   data:
@@ -29,6 +34,12 @@ spring:
     exchange: assets
     template:
       exchange: assets
+
+  elasticsearch:
+    uris: ${ELASTICSEARCH_URL:http://localhost:9200}
+    username: ${ELASTICSEARCH_USERNAME:username}
+    password: ${ELASTICSEARCH_PASSWORD:password}
+    index: xcurator-service.artifacts
 
 ### Kubernetes Health ###
 management:
@@ -70,3 +81,6 @@ ap:
 
 importer:
   enabled: ${IMPORT_ENABLED:false}
+
+deepl:
+  authKey: ${DEEPL_AUTH_KEY}

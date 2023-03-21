@@ -20,12 +20,10 @@ public class SyncListener {
     private final MuseumObjectRepository museumObjectRepository;
 
     private final RabbitTemplate rabbitTemplate;
-    private final ProtoPublisher protoPublisher;
 
     public SyncListener(MuseumObjectRepository museumObjectRepository, RabbitTemplate rabbitTemplate, ProtoPublisher protoPublisher) {
         this.museumObjectRepository = museumObjectRepository;
         this.rabbitTemplate = rabbitTemplate;
-        this.protoPublisher = protoPublisher;
     }
 
     @RabbitListener(bindings = @QueueBinding(value = @Queue(value = "xcurator.sync.create", durable = "true",
@@ -36,14 +34,12 @@ public class SyncListener {
         if (proto.getType() == SyncProtos.SyncTypeProto.XCURATOR) {
             museumObjectRepository.findAll().stream()
                     .map(MuseumObject::toProto)
-                    .forEach(artifactProto -> {
-                        rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KEY, artifactProto, m -> {
-                            m
-                                    .getMessageProperties()
-                                    .setCorrelationId(proto.getId());
-                            return m;
-                        });
-                    });
+                    .forEach(artifactProto -> rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KEY, artifactProto, m -> {
+                        m
+                                .getMessageProperties()
+                                .setCorrelationId(proto.getId());
+                        return m;
+                    }));
         } else {
             log.error("Following sync type is not yet supported");
         }

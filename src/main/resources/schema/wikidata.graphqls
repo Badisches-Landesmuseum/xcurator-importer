@@ -1,0 +1,17 @@
+extend  type Query {
+    wikidataEntities(where: WikiDataEntitiesInput!):  [WikiDataEntity]!
+}
+
+
+input  WikiDataEntitiesInput {
+    ids: [String!]!
+    language: Language!
+}
+
+type WikiDataEntity {
+    id: String!
+    name: String!
+    description: String!
+    imageUrl: URL
+    articleUrl:URL
+}

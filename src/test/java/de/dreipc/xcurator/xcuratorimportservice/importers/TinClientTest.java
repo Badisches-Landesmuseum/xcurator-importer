@@ -27,9 +27,9 @@ class TinClientTest {
     private static APClient client;
 
     @BeforeAll
-    private static void setUp(@Autowired APProperties _properties,
-                              @Autowired AssetService _assetService,
-                              @Autowired StoreMuseumObjectCommand _storeMuseumObjectCommand) {
+    public static void setUp(@Autowired APProperties _properties,
+                             @Autowired AssetService _assetService,
+                             @Autowired StoreMuseumObjectCommand _storeMuseumObjectCommand) {
         client = new APClient(_properties, new ObjectMapper(), _assetService, _storeMuseumObjectCommand);
     }
 

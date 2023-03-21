@@ -7,12 +7,10 @@ import de.dreipc.xcurator.xcuratorimportservice.config.AssetServiceProperties;
 import de.dreipc.xcurator.xcuratorimportservice.repositories.MuseumObjectRepository;
 import de.dreipc.xcurator.xcuratorimportservice.services.AssetService;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -47,15 +45,9 @@ class APSparqlClientTest {
         when(apProperties.getBeeldbankItemCount()).thenReturn(100);
 
         this.client = new APSparqlClient(new ObjectMapper(), assetService, apProperties, storeCommand,
-                                         museumObjectRepository);
+                museumObjectRepository);
     }
-
-    @Test
-    @Disabled
-    void requestData() throws IOException, InterruptedException {
-        //client.requestApi();
-    }
-
+    
     @Test
     void totalCount() {
         var count = client.getTotalAvailableData();

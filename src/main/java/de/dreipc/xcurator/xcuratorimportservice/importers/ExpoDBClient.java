@@ -122,14 +122,13 @@ public class ExpoDBClient implements Client {
 
             var notExistingMuseumResults = museumResults.stream().filter(obj -> !museumObjectRepository.existsByExternalId(obj.getMuseumObject().getExternalId())).toList();
             var diff = museumResults.size() - notExistingMuseumResults.size();
-            log.info("Skipping " + diff + " Objects, due they already exist. Import " + notExistingMuseumResults.size() +" additional Objects ");
-            if(notExistingMuseumResults.size() == 0){
+            log.info("Skipping " + diff + " Objects, due they already exist. Import " + notExistingMuseumResults.size() + " additional Objects ");
+            if (notExistingMuseumResults.size() == 0) {
                 log.info("Nothing to import. Skip");
                 return new ArrayList<>();
             }
             countryService.names(notExistingMuseumResults);
-            var saved = storeMuseumObjectCommand.save(notExistingMuseumResults);
-            return saved;
+            return storeMuseumObjectCommand.save(notExistingMuseumResults);
         } catch (Exception e) {
             log.error("batch could not be saved", e);
             return new ArrayList<>();
@@ -153,7 +152,7 @@ public class ExpoDBClient implements Client {
         try {
             return importObjects(properties.getMaxItemCount()).size();
         } catch (Exception e) {
-            log.warn("Did not import: " + getClientName() + "cause:", e);
+            log.warn("Did not import: " + getDataSource() + "cause:", e);
             return 0;
         }
     }
@@ -161,14 +160,14 @@ public class ExpoDBClient implements Client {
     @Transactional
     public List<MuseumObject> importObjects(int totalCount) {
         if (totalCount == 0) {
-            log.info("No data were selected for: " + getClientName() + " import");
+            log.info("No data were selected for: " + getDataSource() + " import");
             return Collections.emptyList();
         }
 
         var totalNumberOfAvailableData = getTotalAvailableData();
         log.info("There are  " + totalNumberOfAvailableData + " available data in their storage.");
-        var total = totalNumberOfAvailableData < totalCount ? totalNumberOfAvailableData : totalCount;
-        log.info("Start importing from: " + getClientName());
+        var total = Math.min(totalNumberOfAvailableData, totalCount);
+        log.info("Start importing from: " + getDataSource());
 
         return StreamUtil.getUrlStreams(total, this::buildBatchFetchingUrl)
                 .map(this::processAndSave)
@@ -208,7 +207,7 @@ public class ExpoDBClient implements Client {
                     .createdAt(Instant.now())
                     .updatedAt(Instant.now())
                     .content(getStringOrDefault(documentJson, "titel"))
-                    .languageCode(LanguageCode.GERMAN.label)
+                    .languageCode(getDefaultLanguage())
                     .originalText(true)
                     .textType(TextType.TITLE)
                     .build();
@@ -220,7 +219,7 @@ public class ExpoDBClient implements Client {
                     .createdAt(Instant.now())
                     .updatedAt(Instant.now())
                     .content(getStringOrDefault(documentJson, "textdeutsch"))
-                    .languageCode(LanguageCode.GERMAN.label)
+                    .languageCode(getDefaultLanguage())
                     .textType(TextType.DESCRIPTION)
                     .originalText(true)
                     .build();
@@ -245,9 +244,11 @@ public class ExpoDBClient implements Client {
                     .dateRange(dateRange)
                     .assetIds(images.stream().map(MuseumImage::getId).toList())
                     .location(location)
-                    .keywords(keywords).createdAt(Instant.now())
+                    .keywords(keywords)
+                    .createdAt(Instant.now())
                     .updatedAt(Instant.now())
                     .techniques(technik)
+                    .dataSource(getDataSource())
                     .materials(materials)
                     .build();
 
@@ -260,8 +261,13 @@ public class ExpoDBClient implements Client {
     }
 
     @Override
-    public ClientName getClientName() {
-        return ClientName.EXPODB;
+    public DataSource getDataSource() {
+        return DataSource.EXPODB;
+    }
+
+    @Override
+    public LanguageCode getDefaultLanguage() {
+        return LanguageCode.de;
     }
 
 

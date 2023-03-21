@@ -1,8 +1,8 @@
 package de.dreipc.xcurator.xcuratorimportservice.repositories;
 
 
+import de.dreipc.xcurator.xcuratorimportservice.models.LanguageCode;
 import de.dreipc.xcurator.xcuratorimportservice.models.TextContent;
-import de.dreipc.xcurator.xcuratorimportservice.models.TextType;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,15 +34,6 @@ public class TextContentRepositoryImpl implements TextContentRepositoryCustom {
         return template.find(query, TextContent.class);
     }
 
-    @Override
-    public List<ObjectId> findAllIdsBySourceIdAndTextType(ObjectId sourceId, TextType textType) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("sourceId").is(sourceId));
-        query.addCriteria(Criteria.where("textType").is(textType));
-        query.fields().include("_id");
-        var results = template.find(query, TextContent.class);
-        return results.stream().map(TextContent::getId).toList();
-    }
 
     @Override
     public void deleteAllBySourceId(List<ObjectId> museumObjectIds) {
@@ -51,5 +42,13 @@ public class TextContentRepositoryImpl implements TextContentRepositoryCustom {
         template.remove(query, TextContent.class);
     }
 
+    @Override
+    public List<ObjectId> findAllIdsByLanguageCode(LanguageCode languageCode) {
+        Query query = new Query();
+        query.fields().include("_id");
+        query.addCriteria(Criteria.where("languageCode").is(languageCode));
+        var results = template.find(query, TextContent.class);
+        return results.stream().map(TextContent::getId).toList();
+    }
 
 }

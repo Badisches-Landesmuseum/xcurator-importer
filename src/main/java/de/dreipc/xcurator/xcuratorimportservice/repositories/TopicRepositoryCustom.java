@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface TopicRepositoryCustom {
 
-    List<ObjectId> findAllIdsBySourceIds(List<ObjectId> sourceIds);
 
     void deleteAllBySourceId(List<ObjectId> museumObjectIds);
 

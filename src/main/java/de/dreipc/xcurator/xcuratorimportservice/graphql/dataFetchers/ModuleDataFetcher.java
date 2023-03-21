@@ -28,11 +28,10 @@ public class ModuleDataFetcher {
     }
 
 
-
     @DgsData(parentType = "Module")
-    public CompletableFuture<MuseumObject> museumObject(@NotNull DgsDataFetchingEnvironment dfe, DgsDataFetchingEnvironment environment) {
-        var source = (Module) dfe.getSource();
-        var dataLoader = environment.<ObjectId, MuseumObject>getDataLoader(MuseumObjectDataLoader.class);
+    public CompletableFuture<MuseumObject> museumObject(@NotNull DgsDataFetchingEnvironment env) {
+        var source = (Module) env.getSource();
+        var dataLoader = env.<ObjectId, MuseumObject>getDataLoader(MuseumObjectDataLoader.class);
         return dataLoader.load(source.getMuseumObjectId());
     }
 

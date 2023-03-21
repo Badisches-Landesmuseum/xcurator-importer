@@ -2,9 +2,9 @@ package de.dreipc.xcurator.xcuratorimportservice.wikidata;
 
 import de.dreipc.xcurator.xcuratorimportservice.wikidata.fetchers.BaseEntityFetcher;
 import de.dreipc.xcurator.xcuratorimportservice.wikidata.fetchers.NameFetcher;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,18 +35,30 @@ public class WikiData {
         var results = API.requestQuery(query);
         var qidToName = nameFetcher.convert(results);
 
-        return ids.stream().map(qidToName::get).toList();
+        return ids
+                .stream()
+                .map(qidToName::get)
+                .toList();
     }
 
     public WikiDataBaseEntity entity(String id) {
-        if (isNotAWikiId(id))
-            throw new IllegalArgumentException("Id (" + id + ") is not a valid Wiki Id.");
-        return entities(List.of(id)).get(0);
+        return entity(id, DEFAULT_LANGUAGE);
     }
 
-    private List<WikiDataBaseEntity> entities(List<String> ids) {
+    public WikiDataBaseEntity entity(String id, String language) {
+        if (isNotAWikiId(id))
+            throw new IllegalArgumentException("Id (" + id + ") is not a valid Wiki Id.");
+        return entities(List.of(id), language).get(0);
+    }
+
+    public List<WikiDataBaseEntity> entities(List<String> ids) {
+        return entities(ids, DEFAULT_LANGUAGE);
+    }
+
+    @Cacheable("wikidata")
+    public List<WikiDataBaseEntity> entities(List<String> ids, String language) {
         var entityFetcher = new BaseEntityFetcher();
-        var query = entityFetcher.query(ids, DEFAULT_LANGUAGE);
+        var query = entityFetcher.query(ids, language);
         var results = API.requestQuery(query);
         return entityFetcher.convert(results);
     }

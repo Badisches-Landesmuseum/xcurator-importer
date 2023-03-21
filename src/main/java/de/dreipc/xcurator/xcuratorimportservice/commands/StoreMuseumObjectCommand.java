@@ -43,8 +43,7 @@ public class StoreMuseumObjectCommand {
     }
 
     public List<MuseumObject> saveMuseumResults(List<MuseumObject> museumObjects) {
-        var saved = this.repository.insert(museumObjects);
-        return saved;
+        return this.repository.insert(museumObjects);
     }
 
     public List<TextContent> saveAllTextContent(List<TextContent> textContents) {

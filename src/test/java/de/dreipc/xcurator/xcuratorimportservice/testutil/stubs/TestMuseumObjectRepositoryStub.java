@@ -19,14 +19,6 @@ public class TestMuseumObjectRepositoryStub extends RepositoryStub<MuseumObject>
 
 
     @Override
-    public void addAssetId(ObjectId id, ObjectId assetId) {
-        this.memoryStorage
-                .get(id)
-                .getAssetIds()
-                .add(assetId);
-    }
-
-    @Override
     public boolean existsByExternalId(String externalId) {
         return this.memoryStorage
                 .values()

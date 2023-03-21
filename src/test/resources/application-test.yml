@@ -4,6 +4,10 @@ spring:
       org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration,
       org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration,
       org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration
+      org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchAutoConfiguration;
+      org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDataAutoConfiguration;
+      org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchRepositoriesAutoConfiguration;
+
   main:
     allow-bean-definition-overriding: true
   rabbitmq:
@@ -13,6 +17,9 @@ spring:
 
 management:
   health:
+    health:
+      elasticsearch:
+        enabled: false
     mongo:
       enabled: false
     rabbit:

@@ -1,7 +1,6 @@
 package de.dreipc.xcurator.xcuratorimportservice.services;
 
 import de.dreipc.rabbitmq.ProtoPublisher;
-import de.dreipc.rabbitmq.ProtoRPCHandlerAsync;
 import de.dreipc.rabbitmq.ProtoUtil;
 import de.dreipc.xcurator.xcuratorimportservice.config.AssetServiceProperties;
 import de.dreipc.xcurator.xcuratorimportservice.models.MuseumImage;

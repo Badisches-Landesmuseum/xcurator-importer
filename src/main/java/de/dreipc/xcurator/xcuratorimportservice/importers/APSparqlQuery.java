@@ -55,18 +55,16 @@ public class APSparqlQuery {
     }
 
     public static String totalCountQuery() {
-        String builder = IMPORTS +
+        return IMPORTS +
                 SELECT_TOTAL_COUNT +
                 WHERE_QUERY;
-        return builder;
     }
 
     public static String getDataBatchedQuery(int take, int skip) {
-        String builder = IMPORTS +
+        return IMPORTS +
                 SELECT_FIELDS +
                 WHERE_QUERY +
                 "LIMIT " + take +
                 "OFFSET " + skip;
-        return builder;
     }
 }

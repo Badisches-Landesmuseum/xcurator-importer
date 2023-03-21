@@ -23,9 +23,14 @@ public class NamedEntitiesRequester {
         textContents.forEach(this::execute);
     }
 
+    public void execute(Iterable<TextContent> textContents) {
+        textContents.forEach(this::execute);
+    }
+
     public void execute(TextContent textContent) {
         execute(textContent.getId(), textContent.getContent());
     }
+
     public void execute(ObjectId id, String content) {
         var proto = NamedEntitiesProtos.NamedEntitiesDetectionAction.newBuilder()
                 .setId(id.toString())

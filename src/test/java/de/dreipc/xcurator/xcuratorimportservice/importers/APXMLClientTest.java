@@ -13,7 +13,7 @@ class APXMLClientTest {
     private APXMLClient client;
 
     @BeforeEach
-    private void setUp(){
+    public void setUp() {
         var assetService = mock(AssetService.class);
         var museumObjectRepository = mock(MuseumObjectRepository.class);
         var storeMuseumObjectCommand = mock(StoreMuseumObjectCommand.class);
@@ -21,7 +21,7 @@ class APXMLClientTest {
     }
 
     @Test
-    void importObjects(){
+    void importObjects() {
         client.importObjects(-1);
     }
 

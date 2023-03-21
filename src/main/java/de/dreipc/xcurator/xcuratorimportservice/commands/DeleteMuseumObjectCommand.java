@@ -49,7 +49,7 @@ public class DeleteMuseumObjectCommand {
         topicRepository.deleteAllBySourceId(ids);
         ids.forEach(this::publish);
         log.info("Deleted: " + ids.size() + " artifacts");
-        return ids.stream().map(id -> new MuseumObject(id)).toList();
+        return ids.stream().map(MuseumObject::new).toList();
     }
 
 

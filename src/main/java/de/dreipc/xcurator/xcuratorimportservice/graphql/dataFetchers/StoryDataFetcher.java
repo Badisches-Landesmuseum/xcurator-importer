@@ -40,12 +40,12 @@ public class StoryDataFetcher {
     }
 
     @DgsData(parentType = "Story")
-    public CompletableFuture<List<Module>> modules(@NotNull DgsDataFetchingEnvironment dfe, DgsDataFetchingEnvironment environment) {
-        var source = (Story) dfe.getSource();
+    public CompletableFuture<List<Module>> modules(@NotNull DgsDataFetchingEnvironment env) {
+        var source = (Story) env.getSource();
         var relatedIds = moduleRepository.findAllIdsByStoryId(source.getId());
-        var dataLoader = environment.<ObjectId, Module>getDataLoader(ModuleDataLoader.class);
+        var dataLoader = env.<ObjectId, Module>getDataLoader(ModuleDataLoader.class);
         if (relatedIds == null)
-            return CompletableFuture.supplyAsync(() -> new ArrayList<>());
+            return CompletableFuture.supplyAsync(ArrayList::new);
         return dataLoader.loadMany(relatedIds);
     }
 
